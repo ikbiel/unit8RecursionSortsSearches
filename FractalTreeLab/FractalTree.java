@@ -7,24 +7,16 @@ import javax.swing.JPanel;
  */
 public class FractalTree extends JPanel
 {
-    //starting trunk point
-     private int startX = 200, startY = 350;
-    //ending trunk points
-     private int endX = 200, endY = 300;
     // how much smaller branches are
-     private int diffOfSize = .75;
+     private double diffOfSize = .75;
     // how small branches get
-     private int minSize = .5;
+     private double minSize = 20.0;
     // angle between branches
-     private int angle = 60;
-    
-     private final double SQ = Math.sqrt(3.0) / 2;
-     
-     //create panel
-     
+     private double aAngle = Math.toRadians(20.0);
+
+    //create panel
      private final int PANEL_WIDTH = 400;
      private final int PANEL_HEIGHT = 400;
-     
      private int current; //current order
      
     /**
@@ -38,34 +30,45 @@ public class FractalTree extends JPanel
     }
     
     //Draws fractal recursively
-    //Base case is order of 1 -- simple straight line is drawn
-    //Otherwise two branches are computed - each line segment is drawn as a fractal
-    public void drawFractal(int order, int x1, int y1, int x2, int y2, Graphics page)
+    //if lines are too small, stop program!
+    //Otherwise trunk is drawn, two new branches are computed - 
+        //each line segment is drawn as a fractal
+    public void drawFractal(double angle, int x1, int y1, int x2, int y2, Graphics page)
     {
-        //calculate all new points
-        
-        int deltaX, deltaY;
-        int rightX, rightY;
-        int leftX, leftY;
+        //calculate length
+        double length1 = Math.sqrt((Math.pow(x2-x1, 2))+(Math.pow(y2-y1, 2)));
+        //new branch points
+        int x3, y3;
+        int x4, y4;
 
-        if(order == 1)
+        if(length1<minSize)
         {
-            page.drawLine(x1, y1, x2, y2);
+            return;
         }
-        else
+        else 
         {
-            deltaX = x2-x1;
-            deltaY = y2-y1;
+            //draw trunk
+            page.drawLine(x1, y1, x2, y2);
+            //calculate next length
+            double length2 = length1 * diffOfSize;
+            //calculate right branch
+            double rightAngle = angle + aAngle;
+            x3 = x2 + (int)Math.sin(rightAngle);
+            y3 = y2 + (int)Math.cos(rightAngle);
+            //draw right line
+            page.drawLine(x2, y2, x3, y3);
             
-            rightX = (int) (x1+x2)/2 + SQ * (y1-y2));
-            rightY = (int) (y1+y2)/2 + SQ * (x2-x1));
+            //calculate left branch
+            double leftAngle = angle - aAngle;
+            x4 = x2 - (int)Math.sin(leftAngle);
+            y4 = y2 - (int)Math.cos(leftAngle);
+            //draw left line
+            page.drawLine(x2, y2, x4, y4);
             
-            leftX = (int) (x1+x2)/2 - SQ * (y1-y2));
-            leftY = (int) (y1+y2)/2 - SQ * (x2-x1));
+            drawFractal(rightAngle, x2, y2, x3, y3, page);
+            drawFractal(leftAngle, x2, y2, x4, y4, page);
             
-            drawFractal(order-1, x2, y2, rightX, rightY, page);
-            drawFractal(order-1, x2, y2, leftX, leftY, page);
-            
+           
         }
         
     }
@@ -75,7 +78,11 @@ public class FractalTree extends JPanel
         super.paintComponent(page);
         page.setColor(Color.green);
         
-        drawFractal(current, startX, startY, endX, endY, page);
+        //trunk values
+        int startX = 200, startY = 350;
+        int endX = 200, endY = 260;
+        
+        drawFractal(Math.toRadians(90), startX, startY, endX, endY, page);
     }
     
     public void setOrder( int order )
