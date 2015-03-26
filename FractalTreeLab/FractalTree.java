@@ -10,9 +10,9 @@ public class FractalTree extends JPanel
     // how much smaller branches are
      private double diffOfSize = .75;
     // how small branches get
-     private double minSize = 20.0;
+     private double minSize = 5.0;
     // angle between branches
-     private double aAngle = Math.toRadians(20.0);
+     private double aAngle = Math.toRadians(30);
 
     //create panel
      private final int PANEL_WIDTH = 400;
@@ -38,8 +38,10 @@ public class FractalTree extends JPanel
         //calculate length
         double length1 = Math.sqrt((Math.pow(x2-x1, 2))+(Math.pow(y2-y1, 2)));
         //new branch points
-        int x3, y3;
-        int x4, y4;
+        int x3, y3; //right
+        int x4, y4; //left
+        //new angles
+        double rightAngle, leftAngle;
 
         if(length1<minSize)
         {
@@ -51,22 +53,23 @@ public class FractalTree extends JPanel
             page.drawLine(x1, y1, x2, y2);
             //calculate next length
             double length2 = length1 * diffOfSize;
+            
             //calculate right branch
-            double rightAngle = angle + aAngle;
-            x3 = x2 + (int)Math.sin(rightAngle);
-            y3 = y2 + (int)Math.cos(rightAngle);
+            rightAngle = angle + aAngle;
+            x3 = x2 + (int)(length2*Math.sin(rightAngle));
+            y3 = y2 + (int)(length2*Math.cos(rightAngle));
             //draw right line
             page.drawLine(x2, y2, x3, y3);
             
             //calculate left branch
-            double leftAngle = angle - aAngle;
-            x4 = x2 - (int)Math.sin(leftAngle);
-            y4 = y2 - (int)Math.cos(leftAngle);
+            leftAngle = angle - aAngle;
+            x4 = x2 - (int)(length2*Math.sin(leftAngle));
+            y4 = y2 - (int)(length2*Math.cos(leftAngle));
             //draw left line
             page.drawLine(x2, y2, x4, y4);
             
-            drawFractal(rightAngle, x2, y2, x3, y3, page);
-            drawFractal(leftAngle, x2, y2, x4, y4, page);
+            drawFractal(rightAngle+30, x2, y2, x3, y3, page);
+            drawFractal(leftAngle-30, x2, y2, x4, y4, page);
             
            
         }
