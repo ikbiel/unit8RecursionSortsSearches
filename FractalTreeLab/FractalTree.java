@@ -12,7 +12,7 @@ public class FractalTree extends JPanel
     // how small branches get
      private double minSize = 5.0;
     // angle between branches
-     private double aAngle = Math.toRadians(30);
+     private double aAngle = Math.toRadians(60);
 
     //create panel
      private final int PANEL_WIDTH = 400;
